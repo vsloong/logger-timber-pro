@@ -6,25 +6,34 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.vsloong.logger.timber.pro.mmap.Pencil
 import com.vsloong.logger.timber.pro.ui.theme.LoggertimberproTheme
+import java.io.File
 
 class MainActivity : ComponentActivity() {
 
     private val TAG = "TimberLogger"
     private val e = Throwable("sample error")
 
+    private val pencil = Pencil()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val logFile = File(this.cacheDir, "timber-log.txt")
+
         setContent {
             LoggertimberproTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -34,6 +43,9 @@ class MainActivity : ComponentActivity() {
                             .padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
+
+                        Text("native sample = ${pencil.stringFromJNI()}")
+
                         AppButton(text = "Verbose") {
                             Timber.v { "Verbose log" }
                             Timber.v { "${23 / 0}" }
@@ -63,6 +75,20 @@ class MainActivity : ComponentActivity() {
                             Timber.e { "${23 / 0}" }
                             Timber.tag(TAG).e(e)
                             Timber.tag(TAG).e(e) { "Error log" }
+
+                            pencil.writeLog(
+                                logPath = logFile.absolutePath,
+                                data = "this is test, time ${System.currentTimeMillis()}"
+                            )
+                        }
+
+                        HorizontalDivider(modifier = Modifier.fillMaxWidth())
+
+                        AppButton(text = "Write to file") {
+                            pencil.writeLog(
+                                logPath = logFile.absolutePath,
+                                data = "write file test, time at ${System.currentTimeMillis()}"
+                            )
                         }
                     }
                 }
