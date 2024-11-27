@@ -1,6 +1,6 @@
 package com.vsloong.logger.timber.pro.mmap
 
-class Pencil {
+class CPencil {
 
     companion object {
         init {

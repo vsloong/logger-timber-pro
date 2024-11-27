@@ -1,8 +1,10 @@
 package com.vsloong.logger.timber.pro.trees
 
+import android.os.Build
 import android.util.Log
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.util.regex.Pattern
 
 /** A facade for handling logging calls. Install instances via [`Timber.plant()`][.plant]. */
 abstract class ATree {
@@ -18,6 +20,33 @@ abstract class ATree {
             }
             return tag
         }
+
+    companion object {
+         const val MAX_LOG_LENGTH = 4000
+        private const val MAX_TAG_LENGTH = 23
+        private val ANONYMOUS_CLASS = Pattern.compile("(\\$\\d+)+$")
+    }
+
+    /**
+     * Extract the tag which should be used for the message from the `element`. By default
+     * this will use the class name without any anonymous class suffixes (e.g., `Foo$1`
+     * becomes `Foo`).
+     *
+     * Note: This will not be called if a [manual tag][.tag] was specified.
+     */
+    protected open fun createStackElementTag(element: StackTraceElement): String? {
+        var tag = element.className.substringAfterLast('.')
+        val m = ANONYMOUS_CLASS.matcher(tag)
+        if (m.find()) {
+            tag = m.replaceAll("")
+        }
+        // Tag length limit was removed in API 26.
+        return if (tag.length <= MAX_TAG_LENGTH || Build.VERSION.SDK_INT >= 26) {
+            tag
+        } else {
+            tag.substring(0, MAX_TAG_LENGTH)
+        }
+    }
 
     /** Log a verbose message. */
     open fun v(message: () -> String?) {

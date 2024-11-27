@@ -10,7 +10,7 @@
 
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_com_vsloong_logger_timber_pro_mmap_Pencil_stringFromJNI(
+Java_com_vsloong_logger_timber_pro_mmap_CPencil_stringFromJNI(
         JNIEnv *env,
         jobject thiz
 ) {
@@ -20,7 +20,7 @@ Java_com_vsloong_logger_timber_pro_mmap_Pencil_stringFromJNI(
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_vsloong_logger_timber_pro_mmap_Pencil_writeLog(
+Java_com_vsloong_logger_timber_pro_mmap_CPencil_writeLog(
         JNIEnv *env,
         jobject thiz,
         jstring log_path,
